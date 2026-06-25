@@ -26,6 +26,7 @@
   },
   "include": [
     "bin/**/*.ts",
+    "lambda/**/*.ts",
     "lib/**/*.ts"
   ],
   "exclude": [

@@ -7,6 +7,8 @@ import {
 } from '@/features/activities/types/activity';
 import { getLocalDateString } from '@/shared/utils/date';
 
+// Future Migration: Keep the local persistence implementation available for
+// offline support and migration of existing AsyncStorage activities.
 const ACTIVITIES_KEY = 'activities';
 
 function isActivityCategory(value: unknown): value is ActivityCategory {

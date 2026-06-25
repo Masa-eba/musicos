@@ -10,17 +10,19 @@ import {
   View,
 } from 'react-native';
 
-import { saveActivity } from '@/features/activities/services/activity-storage';
 import {
   ACTIVITY_CATEGORIES,
   Activity,
   ActivityCategory,
 } from '@/features/activities/types/activity';
+import { useAuth } from '@/features/auth/providers/auth-provider';
+import { createActivity } from '@/shared/api/activities';
 import { colors, layout, shadow } from '@/shared/theme/design';
 import { getLocalDateString } from '@/shared/utils/date';
 import { createId } from '@/shared/utils/id';
 
 export default function ActivityScreen() {
+  const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<ActivityCategory>('Guitar');
   const [minutes, setMinutes] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -43,7 +45,11 @@ export default function ActivityScreen() {
     setIsSaving(true);
 
     try {
-      await saveActivity(activity);
+      if (user === null) {
+        throw new Error('Sign in is required');
+      }
+
+      await createActivity(activity, user.userId);
       setMinutes('');
       Alert.alert('保存しました', `${selectedCategory} ${parsedMinutes}分`);
     } catch {

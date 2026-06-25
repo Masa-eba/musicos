@@ -74,3 +74,23 @@ npm run destroy -- MusicOSStack
 - Billing mode: `PAY_PER_REQUEST`
 - Point-in-time recovery: enabled
 - Removal policy: `DESTROY`
+- Lambda: `CreateActivityFunction`
+  - Writes activities to DynamoDB
+  - Environment variable: `TABLE_NAME`
+- Lambda: `GetActivitiesFunction`
+  - Queries activities by `userId`
+  - Environment variable: `TABLE_NAME`
+- HTTP API: `MusicOSActivitiesApi`
+  - `POST /activities` invokes `CreateActivityFunction`
+  - `GET /activities?userId=<cognito-sub>` invokes `GetActivitiesFunction`
+  - CORS allows `GET` and `POST` from all origins during development
+- CloudFormation output: `ApiEndpoint`
+- Cognito User Pool: `MusicOSUserPool`
+  - Email and password sign-up/sign-in
+  - Email verification enabled
+- Cognito User Pool Client: `MusicOSAppClient`
+- CloudFormation outputs:
+  - `UserPoolId`
+  - `UserPoolClientId`
+
+The frontend is not connected to this API yet.

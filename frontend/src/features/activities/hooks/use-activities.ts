@@ -1,10 +1,12 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 
-import { getActivities } from '@/features/activities/services/activity-storage';
 import { Activity } from '@/features/activities/types/activity';
+import { useAuth } from '@/features/auth/providers/auth-provider';
+import { getActivities } from '@/shared/api/activities';
 
 export function useActivities() {
+  const { user } = useAuth();
   const [activities, setActivities] = useState<Activity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -12,13 +14,13 @@ export function useActivities() {
     setIsLoading(true);
 
     try {
-      setActivities(await getActivities());
+      setActivities(user === null ? [] : await getActivities(user.userId));
     } catch {
       setActivities([]);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [user]);
 
   useFocusEffect(
     useCallback(() => {

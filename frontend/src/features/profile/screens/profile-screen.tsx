@@ -1,14 +1,17 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { useAuth } from '@/features/auth/providers/auth-provider';
 import { colors, layout, shadow } from '@/shared/theme/design';
 
-const profileItems = [
-  { label: 'ユーザー名', value: 'Masatoshi' },
-  { label: '使用楽器', value: 'Guitar' },
-  { label: '自己紹介', value: 'MusicOS Developer' },
-] as const;
-
 export default function ProfileScreen() {
+  const { signOut, user } = useAuth();
+  const profileItems = [
+    { label: 'Email', value: user?.email ?? '' },
+    { label: '使用楽器', value: 'Guitar' },
+    { label: '自己紹介', value: 'MusicOS Developer' },
+  ] as const;
+  const avatarText = user?.email.charAt(0).toUpperCase() ?? 'M';
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -17,10 +20,10 @@ export default function ProfileScreen() {
 
         <View style={styles.hero}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>M</Text>
+            <Text style={styles.avatarText}>{avatarText}</Text>
           </View>
           <View style={styles.heroText}>
-            <Text style={styles.name}>Masatoshi</Text>
+            <Text style={styles.name}>{user?.email ?? 'MusicOS User'}</Text>
             <Text style={styles.role}>MusicOS Developer</Text>
           </View>
           <View style={styles.instrumentBadge}>
@@ -37,6 +40,12 @@ export default function ProfileScreen() {
             </View>
           ))}
         </View>
+
+        <Pressable
+          onPress={() => void signOut()}
+          style={({ pressed }) => [styles.signOutButton, pressed && styles.pressed]}>
+          <Text style={styles.signOutText}>Sign out</Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
@@ -148,5 +157,21 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 18,
     fontWeight: '600',
+  },
+  signOutButton: {
+    alignItems: 'center',
+    paddingVertical: 15,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderWidth: 1,
+    borderRadius: 14,
+  },
+  signOutText: {
+    color: '#ff7474',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  pressed: {
+    opacity: 0.75,
   },
 });
